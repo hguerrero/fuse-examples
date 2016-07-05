@@ -6,7 +6,7 @@
   <groupId>mx.redhat.samples.fuse</groupId>
   <artifactId>rest-proxy-basic-auth</artifactId>
   <packaging>bundle</packaging>
-  <version>1.0</version>
+  <version>1.0.1</version>
 
   <name>REST DSL Proxy to Basic Auth Route</name>
 
@@ -22,7 +22,7 @@
     
     <!-- Fabric8 configuration -->
     <fabric8.profile>camel-restproxy</fabric8.profile>
-    <fabric8.features>camel-http4 camel-jetty</fabric8.features>
+    <fabric8.features>camel-http4 camel-servlet</fabric8.features>
     <fabric8.parentProfiles>feature-camel</fabric8.parentProfiles>
     <fabric8.jolokiaUrl>http://fuse01.lab.mx.redhat.com:8181/jolokia</fabric8.jolokiaUrl>
     <fabric8.upload>false</fabric8.upload>
@@ -101,8 +101,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty</artifactId>
-      <version>${camel.version}</version>
+      <artifactId>camel-servlet</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
