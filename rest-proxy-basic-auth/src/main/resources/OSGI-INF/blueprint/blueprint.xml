@@ -14,19 +14,19 @@
                 <to uri="direct:bye"/>
             </get>
         </rest>
-        <route id="_route1">
+        <route id="_hello">
             <from id="_from2" uri="direct:hello"/>
-            <transform id="_transform1">
+            <transform id="_helloworld">
                 <constant>Hello World</constant>
             </transform>
         </route>
-        <route id="_route2">
+        <route id="_bye">
             <from id="_from3" uri="direct:bye"/>
-            <transform id="_transform2">
+            <transform id="_byeworld">
                 <constant>Bye World</constant>
             </transform>
         </route>
-        <route id="timerToLog">
+        <route id="_callToProxy">
             <!-- from id="_from1" uri="timer:foo?period=5000"/> -->
             <from id="_from1" uri="direct:call"/>
             <to id="_http4" uri="http4://jbpm.kaf.com.mx:8080/kie-server/services/rest/server?bridgeEndpoint=true&amp;throwExceptionOnFailure=false&amp;authUsername=bpms&amp;authPassword=KAF_bpm2016*"/>
