@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd        http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+    <bean id="xaDataSource" class="org.postgresql.xa.PGXADataSource">
+        <property name="serverName" value="localhost"/>
+        <property name="portNumber" value="5432"/>
+        <property name="databaseName" value="fuse"/>
+        <property name="user" value="postgres"/>
+        <property name="password" value="postgres"/>
+    </bean>
+    
+    <service ref="xaDataSource" interface="javax.sql.XADataSource">
+        <service-properties>
+            <entry key="osgi.jndi.service.name" value="jdbc/pgsqldb"/>
+            <entry key="datasource.name" value="PostgreSQL"/>
+
+            <!-- additional supported properties 
+                https://github.com/apache/aries/blob/trunk/transaction/transaction-jdbc/src/main/java/org/apache/aries/transaction/jdbc/internal/ManagedDataSourceFactory.java#L94
+            -->
+            <entry key="aries.managed" value="true" />
+            <entry key="aries.xa.aware" value="true" />
+            <entry key="aries.xa.pooling" value="true" />
+            <entry key="aries.xa.poolMinSize" value="0" />
+            <entry key="aries.xa.poolMaxSize" value="5" />
+            <entry key="aries.xa.name" value="pgsqlDS" />      
+            <entry key="aries.xa.exceptionSorter" value="known" />
+        </service-properties>
+    </service>
+</blueprint>

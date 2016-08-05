@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>mx.redhat.samples.fuse</groupId>
+  <artifactId>database-services</artifactId>
+  <packaging>bundle</packaging>
+  <version>1.0.1</version>
+
+  <name>PostgreSQL Database Services</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    
+    <!-- the version of the JBoss Fuse BOM, defining all the dependency versions -->
+    <jboss.fuse.bom.version>6.2.1.redhat-084</jboss.fuse.bom.version>
+    <postgresql.version>9.4.1209.jre7</postgresql.version>
+  </properties>
+
+  <dependencyManagement>
+  	<dependencies>
+  		<dependency>
+  			<groupId>org.jboss.fuse.bom</groupId>
+  			<artifactId>jboss-fuse-parent</artifactId>
+  			<version>${jboss.fuse.bom.version}</version>
+  			<type>pom</type>
+			<scope>import</scope>
+  		</dependency>
+  	</dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>release.fusesource.org</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
+     <id>ea.fusesource.org</id>
+     <name>FuseSource Community Early Access Release Repository</name>
+     <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
+     <snapshots>
+      <enabled>false</enabled>
+     </snapshots>
+     <releases>
+      <enabled>true</enabled>
+     </releases>
+    </repository>    
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>release.fusesource.org</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+     <id>ea.fusesource.org</id>
+     <name>FuseSource Community Early Access Release Repository</name>
+     <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
+     <snapshots>
+      <enabled>false</enabled>
+     </snapshots>
+     <releases>
+      <enabled>true</enabled>
+     </releases>
+    </pluginRepository>      
+  </pluginRepositories>
+
+  <dependencies>
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+
+    <dependency>
+    	<groupId>org.postgresql</groupId>
+    	<artifactId>postgresql</artifactId>
+    	<version>${postgresql.version}</version>
+    	<type>bundle</type>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.5.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <!-- to generate the MANIFEST-FILE of the bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.3.7</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+           <id>bundle-manifest</id>
+           <phase>process-classes</phase>
+           <goals>
+               <goal>manifest</goal>
+           </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <Private-Package>mx.redhat.samples.fuse.database.services.*</Private-Package>
+            <Import-Package>*,javax.sql,org.postgresql,org.postgresql.ds,org.postgresql.xa</Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>
