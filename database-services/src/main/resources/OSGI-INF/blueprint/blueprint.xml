@@ -17,14 +17,14 @@
 
             <!-- additional supported properties 
                 https://github.com/apache/aries/blob/trunk/transaction/transaction-jdbc/src/main/java/org/apache/aries/transaction/jdbc/internal/ManagedDataSourceFactory.java#L94
-            -->
             <entry key="aries.managed" value="true" />
             <entry key="aries.xa.aware" value="true" />
             <entry key="aries.xa.pooling" value="true" />
             <entry key="aries.xa.poolMinSize" value="0" />
             <entry key="aries.xa.poolMaxSize" value="5" />
-            <entry key="aries.xa.name" value="pgsqlDS" />      
             <entry key="aries.xa.exceptionSorter" value="known" />
+            -->
+            <entry key="aries.xa.name" value="pgsqlDS" />      
         </service-properties>
     </service>
 </blueprint>
