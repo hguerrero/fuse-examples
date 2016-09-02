@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    JBoss, Home of Professional Open Source
+    Copyright 2014, Red Hat, Inc. and/or its affiliates, and individual
+    contributors by the @authors tag. See the copyright.txt in the
+    distribution for a full listing of individual contributors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!-- Configures the Camel Context-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="amqfanout">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL" value="tcp://vsclintegr01.actinver.com.mx:36917?jms.prefetchPolicy.all=1"/>
+            </bean>
+        </property>
+    </bean>
+    <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="amqtopics">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL" value="tcp://vsclintegr01.actinver.com.mx:53008?jms.prefetchPolicy.all=1"/>
+            </bean>
+        </property>
+    </bean>
+    <camelContext id="_camelContext1"
+        xmlns="http://camel.apache.org/schema/spring" xmlns:order="http://fabric8.com/examples/order/v7">
+        <dataFormats>
+            <json id="jack" library="Jackson"/>
+        </dataFormats>
+        <route id="_route1">
+            <from id="_from1" uri="amqfanout:queue:divisas?asyncConsumer=true"/>
+            <log id="_log2" message="message raw: ${body}"/>
+            <bean beanType="mx.redhat.fuse.demo.CurrencyParser" id="_bean1"/>
+            <log id="_log2" message="message map: ${body}"/>
+            <choice id="_choice1">
+                <when id="_when1">
+                    <simple>${body[nombreDivisa]} == 'USD'</simple>
+                    <marshal id="_marshal1">
+                        <json library="Jackson"/>
+                    </marshal>
+                    <log id="_log3" message="message usd: ${body}"/>
+                    <to id="_to1" uri="direct:usd"/>
+                </when>
+                <when id="_when2">
+                    <simple>${body[nombreDivisa]} == 'EUR'</simple>
+                    <marshal id="_marshal1">
+                        <json library="Jackson"/>
+                    </marshal>
+                    <log id="_log3" message="message eur: ${body}"/>
+                    <to id="_to2" uri="direct:eur"/>
+                </when>
+                <otherwise id="_otherwise1">
+                    <marshal id="_marshal1">
+                        <json library="Jackson"/>
+                    </marshal>
+                    <log id="_log3" message="message others: ${body}"/>
+                    <to id="_to3" uri="direct:others"/>
+                </otherwise>
+            </choice>
+        </route>
+        <route id="usd-topic">
+            <from id="_from2" uri="direct:usd"/>
+            <to id="_to4" uri="amqtopics:topic:usd"/>
+        </route>
+        <route id="eur-topic">
+            <from id="_from3" uri="direct:eur"/>
+            <to id="_to5" uri="amqtopics:topic:eur"/>
+        </route>
+        <route id="others-topic">
+            <from id="_from4" uri="direct:others"/>
+            <to id="_to6" uri="amqtopics:topic:others"/>
+        </route>
+    </camelContext>
+</beans>
