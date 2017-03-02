@@ -1,62 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    JBoss, Home of Professional Open Source
-    Copyright 2014, Red Hat, Inc. and/or its affiliates, and individual
-    contributors by the @authors tag. See the copyright.txt in the
-    distribution for a full listing of individual contributors.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-    http://www.apache.org/licenses/LICENSE-2.0
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
--->
-<!-- Configures the Camel Context-->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-    <bean class="org.infinispan.manager.DefaultCacheManager"
-        destroy-method="stop" id="cacheManager" init-method="start">
-        <constructor-arg type="java.lang.String" value="infinispan.xml"/>
-    </bean>
-    <camelContext id="_camelContext1"
-        xmlns="http://camel.apache.org/schema/spring" xmlns:order="http://fabric8.com/examples/order/v7">
-        <route id="_route1">
-            <from id="_from1" uri="stream:file?fileName=/opt/NotBackedUp/jboss-eap-6.4/standalone/log/server.log&amp;scanStream=true"/>
-            <log id="_log1" message="${body}"/>
-            <bean beanType="mx.redhat.demo.fuse.JBossEAPLogParser" id="_process1"/>
-            <marshal id="_marshal1">
-                <json library="Jackson"/>
-            </marshal>
-            <log id="_log1" message="${body}"/>
-            <to id="_to5" uri="direct:infinispan"/>
-        </route>
-        <route id="_route2">
-            <from id="_from3" uri="direct:infinispan"/>
-            <setHeader headerName="CamelInfinispanKey" id="_setHeader1">
-                <simple>${id}</simple>
-            </setHeader>
-            <setHeader headerName="CamelInfinispanValue" id="_setHeader2">
-                <simple>${bodyAs(String)}</simple>
-            </setHeader>
-            <to id="_to2" uri="infinispan://foo?cacheContainer=#cacheManager&amp;cacheName=test"/>
-            <to id="_to3" uri="log:local-put?showAll=true"/>
-            <to id="_to1" uri="mock:result"/>
-        </route>
-        <route id="_route3">
-            <from id="_from3" uri="direct:odata"/>
-            <setHeader headerName="CamelHttpMethod" id="_setHeader3">
-                <constant>POST</constant>
-            </setHeader>
-            <setHeader headerName="CamelHttpQuery" id="_setHeader4">
-                <simple>key='${id}'</simple>
-            </setHeader>
-            <to id="_to4" uri="http4://localhost:8887/ODataInfinispanEndpoint.svc/odataCache_put"/>
-            <to id="_to6" uri="log:local-put?showAll=true"/>
-            <to id="_to7" uri="mock:result"/>
-        </route>
-    </camelContext>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        
+	                    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+	<camelContext xmlns="http://camel.apache.org/schema/spring" xmlns:order="http://fabric8.com/examples/order/v7">
+		<route>
+			<from uri="stream:file?fileName=/opt/NotBackedUp/jboss-datagrid-6.6.0-server/standalone/log/server.log&amp;scanStream=true"/>
+			<bean beanType="mx.redhat.demo.fuse.JBossEAPLogParser"/>
+			<marshal>
+				<json library="Jackson"/>
+			</marshal>
+			<to uri="direct:infinispan"/>
+		</route>
+		<route>
+			<from uri="direct:infinispan"/>
+			<setHeader headerName="CamelInfinispanKey">
+				<simple>${id}</simple>
+			</setHeader>
+			<setHeader headerName="CamelInfinispanValue">
+				<simple>${bodyAs(String)}</simple>
+			</setHeader>
+			<to uri="infinispan://localhost?cacheName=logs"/>
+		</route>
+	</camelContext>
 </beans>

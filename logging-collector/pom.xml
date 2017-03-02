@@ -16,10 +16,11 @@
     </license>
   </licenses>
   <properties>
-    <camel.version>2.15.1.redhat-621084</camel.version>
-    <version.maven-bundle-plugin>2.3.7</version.maven-bundle-plugin>
+    <camel.version>2.17.0.redhat-630224</camel.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <jboss.fuse.bom.version>6.2.1.redhat-084</jboss.fuse.bom.version>
+    <version.maven-bundle-plugin>2.3.7</version.maven-bundle-plugin>
+    <jboss.fuse.bom.version>6.3.0.redhat-224</jboss.fuse.bom.version>
+    <jboss.datagrid.version>6.6.1.Final-redhat-1</jboss.datagrid.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencyManagement>
@@ -48,20 +49,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-groovy</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>
-    </dependency>
-    <dependency>
-    	<groupId>org.apache.camel</groupId>
-    	<artifactId>camel-http4</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jbossdatagrid</artifactId>
-      <version>6.4.1.Final-redhat-2</version>
+      <version>${jboss.datagrid.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -74,10 +67,6 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
     </dependency>
   </dependencies>
   <repositories>
@@ -145,21 +134,14 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.5.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
-        <configuration>
-          <encoding>UTF-8</encoding>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>2.15.1.redhat-621084</version>
+        <version>${camel.version}</version>
         <configuration>
           <fileApplicationContextUri>src/main/resources/META-INF/spring/camel-context.xml</fileApplicationContextUri>
         </configuration>
